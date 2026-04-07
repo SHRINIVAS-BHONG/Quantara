@@ -1,0 +1,21 @@
+# ── Web framework ────────────────────────────────────────────────────────────
+fastapi>=0.111.0
+uvicorn[standard]>=0.29.0
+
+# ── HTTP client (LLM calls, Apify) ───────────────────────────────────────────
+httpx>=0.27.0
+
+# ── Data / ML ─────────────────────────────────────────────────────────────────
+numpy>=1.26.0          # optional – used by FAISS upgrade path
+# faiss-cpu>=1.8.0     # uncomment to use FAISS instead of in-memory store
+
+# ── Pydantic (bundled with FastAPI but pinned for safety) ─────────────────────
+pydantic>=2.7.0
+
+# ── Testing ───────────────────────────────────────────────────────────────────
+pytest>=8.0.0
+pytest-asyncio>=0.23.0
+httpx                  # also used for TestClient
+
+# ── Utilities ─────────────────────────────────────────────────────────────────
+python-dotenv>=1.0.0   # load .env for API keys
