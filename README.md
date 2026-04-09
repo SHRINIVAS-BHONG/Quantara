@@ -23,29 +23,29 @@ The entire cognitive execution is driven using `run_agent(use_memory=True)` poin
 ```mermaid
 flowchart TD
     %% Main Title
-    Main[<b>CrowdWisdomTrading Prediction AI Agent</b><br><i>(Hermes Framework – LLM Reasoning & Search)</i>]
+    Main["CrowdWisdomTrading Prediction AI Agent<br/>(Hermes Framework – LLM Reasoning & Search)"]
 
     %% Top Level Branches
-    Main -- Consists of --> UserAgent[<b>User Input Sequence</b><br>• Perceives Query<br>• Maintains Chat Context<br>• Triggers Execution Search]
-    Main -- Consists of --> MarketEnv[<b>Prediction Market Environment</b><br>• Polymarket / Kalshi / Apify<br>• Attributes: Volume, Odds, Traders, Sentiment]
-    Main -- Uses for --> Output[<b>Output</b><br>• Ranked Trader Recommendations<br>• Explanations & Sentiment Context<br>• Specific Event Copy-Targets]
+    Main -- Consists of --> UserAgent["User Input Sequence<br/>• Perceives Query<br/>• Maintains Chat Context<br/>• Triggers Execution Search"]
+    Main -- Consists of --> MarketEnv["Prediction Market Environment<br/>• Polymarket / Kalshi / Apify<br/>• Attributes: Volume, Odds, Traders, Sentiment"]
+    Main -- Uses for --> Output["Output<br/>• Ranked Trader Recommendations<br/>• Explanations & Sentiment Context<br/>• Specific Event Copy-Targets"]
 
     %% Perception & Market Data Flow
-    UserAgent -- Analyzes --> Perception[<b>Perception Module & Planner</b><br>• Intent & Niche Extraction<br>• Market Categorization <i>(Crypto/Politics)</i><br>• Constraint Identification]
-    MarketEnv -- Provides Data --> KnowledgeBase[<b>Environment Knowledge Base</b><br>• Polymarket Gamma API<br>• Kalshi REST Market Depth<br>• Apify Live Web Sentiment]
+    UserAgent -- Analyzes --> Perception["Perception Module & Planner<br/>• Intent & Niche Extraction<br/>• Market Categorization (Crypto/Politics)<br/>• Constraint Identification"]
+    MarketEnv -- Provides Data --> KnowledgeBase["Environment Knowledge Base<br/>• Polymarket Gamma API<br/>• Kalshi REST Market Depth<br/>• Apify Live Web Sentiment"]
     
     %% Core Engine
-    Perception -- Extracted Features --> Reasoning[<b>LLM Reasoning Engine</b><br><i>(Hermes Core + OpenRouter)</i><br>• Tool Selection & Delegation<br>• Trader Analysis & Scoring<br>• RAG Historical Context Merge]
+    Perception -- Extracted Features --> Reasoning["LLM Reasoning Engine<br/>(Hermes Core + OpenRouter)<br/>• Tool Selection & Delegation<br/>• Trader Analysis & Scoring<br/>• RAG Historical Context Merge"]
     KnowledgeBase -- Retrieves Market Info --> Reasoning
 
     %% Decision & Action
-    Goal([<b>Goal</b><br>Recommend the highest-ROI<br>trader aligning with requested<br>prediction market event.]) -- Guides --> Reasoning
+    Goal(["Goal<br/>Recommend the highest-ROI<br/>trader aligning with requested<br/>prediction market event."]) -- Guides --> Reasoning
     
-    Reasoning -- Selects Best --> Decision[<b>Decision / Action</b><br>• Execute specific Market APIs<br>• Choose Top Traders to Copy<br>• Formulate Trade Thesis]
+    Reasoning -- Selects Best --> Decision["Decision / Action<br/>• Execute specific Market APIs<br/>• Choose Top Traders to Copy<br/>• Formulate Trade Thesis"]
 
     %% Learning Loop (Memory)
-    Decision -- Updates --> NewState[<b>New State (Closed Learning Loop)</b><br>• Update Hermes Memory SQLite<br>• Store Interaction Context<br>• Update Vector RAG]
-    NewState --> UserUpdated([<b>User & Agent</b><br><i>(Updated Knowledge)</i>])
+    Decision -- Updates --> NewState["New State (Closed Learning Loop)<br/>• Update Hermes Memory SQLite<br/>• Store Interaction Context<br/>• Update Vector RAG"]
+    NewState --> UserUpdated(["User & Agent<br/>(Updated Knowledge)"])
     UserUpdated -- Refines Future Perception --> Goal
     UserUpdated --> UserAgent
 ```
