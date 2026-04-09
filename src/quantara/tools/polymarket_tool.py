@@ -1,4 +1,5 @@
 from quantara.core.polymarket import fetch_traders
+from quantara.rag.retriever import ingest_traders
 from tools.registry import registry, tool_result, tool_error
 
 POLYMARKET_FETCH_SCHEMA = {
@@ -16,10 +17,15 @@ POLYMARKET_FETCH_SCHEMA = {
     }
 }
 
-def polymarket_fetch_handler(args: dict) -> str:
+def polymarket_fetch_handler(args: dict, **kwargs) -> str:
     niche = args.get("niche", "general")
     try:
         traders = fetch_traders(niche=niche)
+        # Closed Learning Loop: ingest into RAG for future queries
+        try:
+            ingest_traders(traders)
+        except Exception:
+            pass  # RAG ingestion failure should never block results
         return tool_result(traders=traders)
     except Exception as e:
         return tool_error(f"Failed to fetch Polymarket traders: {e}")

@@ -6,9 +6,9 @@ from dotenv import load_dotenv
 import quantara.tools
 
 try:
-    from run_agent import run_agent
+    from run_agent import AIAgent
 except ImportError:
-    run_agent = None
+    AIAgent = None
 
 logger = logging.getLogger(__name__)
 
@@ -19,19 +19,19 @@ def run_quantara_agent(query: str):
     """
     load_dotenv()
     
-    if run_agent is None:
+    if AIAgent is None:
         raise ImportError(
             "hermes-agent is not installed. Please install it via:\n"
             "pip install 'git+https://github.com/NousResearch/hermes-agent.git'"
         )
 
-    logger.info("Delegating to Hermes run_agent with query: %s", query)
+    logger.info("Delegating to Hermes with query: %s", query)
 
     # STRICT REQUIREMENT: Use OpenRouter
     os.environ["OPENAI_BASE_URL"] = "https://openrouter.ai/api/v1"
     os.environ["OPENAI_API_KEY"] = os.environ.get("OPENROUTER_API_KEY", "missing_key")
     # Selecting a free model on OpenRouter to meet assignment requirement
-    os.environ["LLM_MODEL"] = "meta-llama/llama-3-8b-instruct:free"
+    os.environ["LLM_MODEL"] = "openrouter/free"
     
     # STRICT REQUIREMENT: Closed Learning Loop
     os.environ["ENABLE_MEMORY"] = "true"
@@ -39,8 +39,16 @@ def run_quantara_agent(query: str):
     # Enable our custom toolset in Hermes
     os.environ["AUTO_TOOLSET"] = "quantara"
 
-    # Execute the hermes agent workflow with memory active
-    return run_agent(single_query=query, override_toolsets=["quantara"])
+    # Initialize the agent
+    agent = AIAgent(
+        model=os.environ["LLM_MODEL"],
+        base_url=os.environ["OPENAI_BASE_URL"],
+        api_key=os.environ["OPENAI_API_KEY"],
+        enabled_toolsets=["quantara"]
+    )
+
+    # Execute the hermes agent workflow
+    return agent.chat(query)
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)

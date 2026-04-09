@@ -18,7 +18,7 @@ ENRICHMENT_SCHEMA = {
     }
 }
 
-def trader_enrichment_handler(args: dict) -> str:
+def trader_enrichment_handler(args: dict, **kwargs) -> str:
     traders = args.get("traders", [])
     niche = args.get("niche", "general")
     try:

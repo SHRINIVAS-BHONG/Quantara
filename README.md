@@ -120,7 +120,7 @@ pip install -r requirements.txt  # Installs apify, kalshi-sdk, clob, hermes
 Our entrypoint simplifies all underlying Hermes logic:
 
 ```bash
-python src/quantara/main.py
+python main.py
 ```
 
 ### Example Input

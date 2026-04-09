@@ -15,7 +15,7 @@ RAG_SCHEMA = {
     }
 }
 
-def rag_search_handler(args: dict) -> str:
+def rag_search_handler(args: dict, **kwargs) -> str:
     query = args.get("query", "")
     niche = args.get("niche")
     top_k = args.get("top_k", 5)

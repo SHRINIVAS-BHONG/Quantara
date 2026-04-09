@@ -1,4 +1,5 @@
 from quantara.core.kalshi import fetch_traders
+from quantara.rag.retriever import ingest_traders
 from tools.registry import registry, tool_result, tool_error
 
 KALSHI_FETCH_SCHEMA = {
@@ -16,10 +17,15 @@ KALSHI_FETCH_SCHEMA = {
     }
 }
 
-def kalshi_fetch_handler(args: dict) -> str:
+def kalshi_fetch_handler(args: dict, **kwargs) -> str:
     niche = args.get("niche", "general")
     try:
         traders = fetch_traders(niche=niche)
+        # Closed Learning Loop: ingest into RAG for future queries
+        try:
+            ingest_traders(traders)
+        except Exception:
+            pass  # RAG ingestion failure should never block results
         return tool_result(traders=traders)
     except Exception as e:
         return tool_error(f"Failed to fetch Kalshi traders: {e}")

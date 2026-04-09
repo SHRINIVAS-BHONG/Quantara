@@ -13,7 +13,7 @@ PLANNER_SCHEMA = {
     }
 }
 
-def planner_handler(args: dict) -> str:
+def planner_handler(args: dict, **kwargs) -> str:
     query = args.get("query", "")
     try:
         result = plan(query)

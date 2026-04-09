@@ -18,7 +18,7 @@ NICHE_SCHEMA = {
     }
 }
 
-def niche_classifier_handler(args: dict) -> str:
+def niche_classifier_handler(args: dict, **kwargs) -> str:
     traders = args.get("traders", [])
     niche = args.get("niche", "general")
     try:
