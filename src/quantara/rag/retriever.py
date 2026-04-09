@@ -1,5 +1,5 @@
 from typing import Any, List, Dict
-from rag.vector_store import get_vector_store
+from quantara.rag.vector_store import get_vector_store
 
 
 def _to_text(trader: dict) -> str:

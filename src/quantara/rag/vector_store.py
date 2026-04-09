@@ -46,7 +46,7 @@ def _cosine(a: List[float], b: List[float]) -> float:
 
 
 class VectorStore:
-    PATH = Path("data/vector_store.json")
+    PATH = Path(__file__).resolve().parent.parent.parent.parent / "data" / "vector_store.json"
 
     def __init__(self):
         self.docs: List[Document] = []

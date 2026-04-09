@@ -1,1 +1,26 @@
+# Virtual Environments
 venv/
+env/
+.venv/
+
+# Environment Variables & Secrets (CRITICAL)
+.env
+.env.*
+
+# Python Cache & Artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+
+# Runtime Data & Memory State
+data/
+*.sqlite3
+
+# OS & IDE
+.DS_Store
+.vscode/
+.idea/

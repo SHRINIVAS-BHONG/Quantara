@@ -5,9 +5,7 @@ def compute_score(win_rate: float, roi: float, risk: float) -> float:
     return round(win_rate * 0.5 + roi * 0.3 - risk * 0.2, 4)
 
 
-def analyze_traders(state: dict[str, Any]) -> dict[str, Any]:
-    traders = state.get("traders", [])
-
+def analyze_traders(traders: list[dict[str, Any]]) -> dict[str, Any]:
     for t in traders:
         score = compute_score(
             t.get("win_rate", 0),
@@ -16,7 +14,6 @@ def analyze_traders(state: dict[str, Any]) -> dict[str, Any]:
         )
         t["score"] = score
 
-    traders.sort(key=lambda x: x["score"], reverse=True)
+    traders.sort(key=lambda x: x.get("score", 0), reverse=True)
 
-    state["traders"] = traders
-    return state
+    return {"traders": traders, "analysis_summary": {"highest_score": traders[0]["score"] if traders else 0}}

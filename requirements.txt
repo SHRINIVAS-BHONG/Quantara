@@ -1,0 +1,7 @@
+hermes-agent @ git+https://github.com/NousResearch/hermes-agent.git
+apify-client
+py_clob_client
+kalshi-python
+requests
+python-dotenv
+-e .

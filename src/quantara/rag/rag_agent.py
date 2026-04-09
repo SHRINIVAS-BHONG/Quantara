@@ -1,5 +1,5 @@
 from typing import Any, Dict, List
-from rag.retriever import retrieve_traders, ingest_traders
+from quantara.rag.retriever import retrieve_traders, ingest_traders
 
 
 def run_rag_agent(
