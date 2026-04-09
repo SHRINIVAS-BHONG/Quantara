@@ -131,10 +131,3 @@ Enter query: Find the most consistent copy traders to shadow for the upcoming US
 ### 📈 Detailed Transcripts
 For comprehensive, end-to-end outputs detailing exactly how the Agent plans, invokes Apify, grabs wallets, and provides conversation insights, please view the [`examples.md`](./examples.md) file!
 
----
-
-## 🧠 Scale & Extensibility (Extra Points)
-
-- **Decoupled Architecture:** `src/quantara/core/` operates absolutely independent of Hermes. The logic isn't tightly bound to `AgentState` arrays—it receives raw parameters and returns JSON variables. You can easily hot-swap Hermes for Langchain or Native Python if required.
-- **Fail-Safes & Logging:** API handlers inherently fall-back into mocked structural outputs rather than crashing if credentials (`APIFY_API_TOKEN`) fail. Standardized Python `logging` enforces tracing across `quantara.*`.
-- **Strict Interfaces:** Tool registry descriptors strictly use native JSON schema validations, completely offloading validation logic to the Framework level rather than requiring manual parameter scrubbing inside our custom endpoints.
