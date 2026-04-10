@@ -4,7 +4,7 @@ from tools.registry import registry, tool_result, tool_error
 
 KALSHI_FETCH_SCHEMA = {
     "name": "kalshi_fetch",
-    "description": "Fetch top predictive market traders and metrics from Kalshi given a specific niche.",
+    "description": "Fetch real-time prediction market data from Kalshi. Use this for US-regulated market insights. Combined with Polymarket data, this provides a comprehensive cross-platform view of trader performance.",
     "parameters": {
         "type": "object",
         "properties": {

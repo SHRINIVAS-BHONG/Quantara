@@ -4,7 +4,7 @@ from tools.registry import registry, tool_result, tool_error
 
 POLYMARKET_FETCH_SCHEMA = {
     "name": "polymarket_fetch",
-    "description": "Fetch top predictive market traders and metrics from Polymarket given a specific niche.",
+    "description": "Fetch real-time prediction market data from Polymarket. Use this tool to get the absolute latest trader win rates, ROI, and current events when historical RAG data is insufficient or needs verification.",
     "parameters": {
         "type": "object",
         "properties": {

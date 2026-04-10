@@ -30,7 +30,7 @@ def run_quantara_agent(query: str):
     # STRICT REQUIREMENT: Use OpenRouter
     os.environ["OPENAI_BASE_URL"] = "https://openrouter.ai/api/v1"
     os.environ["OPENAI_API_KEY"] = os.environ.get("OPENROUTER_API_KEY", "missing_key")
-    # Selecting a free model on OpenRouter to meet assignment requirement
+    # Using the generic free router for maximum availability
     os.environ["LLM_MODEL"] = "openrouter/free"
     
     # STRICT REQUIREMENT: Closed Learning Loop
@@ -39,12 +39,19 @@ def run_quantara_agent(query: str):
     # Enable our custom toolset in Hermes
     os.environ["AUTO_TOOLSET"] = "quantara"
 
+    system_prompt = (
+        "You are the Quantara Trading Expert. Provide deep, data-driven insights. "
+        "Check RAG (rag_search) first, then Live APIs. Present data in a professional table."
+    )
+
     # Initialize the agent
     agent = AIAgent(
         model=os.environ["LLM_MODEL"],
         base_url=os.environ["OPENAI_BASE_URL"],
         api_key=os.environ["OPENAI_API_KEY"],
-        enabled_toolsets=["quantara"]
+        enabled_toolsets=["quantara"],
+        ephemeral_system_prompt=system_prompt,
+        quiet_mode=True  # Reduce console noise for a cleaner 'proper' output
     )
 
     # Execute the hermes agent workflow

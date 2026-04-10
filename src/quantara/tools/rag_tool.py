@@ -3,7 +3,7 @@ from tools.registry import registry, tool_result, tool_error
 
 RAG_SCHEMA = {
     "name": "rag_search",
-    "description": "Search RAG memory for historical context and traders matching a query.",
+    "description": "Access the Quantara Historical Memory. ALWAYS search here first for consistent trader profiles, historical win rates, and saved market context before querying live APIs.",
     "parameters": {
         "type": "object",
         "properties": {
