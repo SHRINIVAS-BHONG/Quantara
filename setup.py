@@ -39,7 +39,6 @@ setup(
         ]
     },
     python_requires=">=3.8",
-    author="Quantara Team",
     description="LangGraph-powered prediction market trading agent",
     long_description="A sophisticated multi-agent system for analyzing prediction markets and identifying profitable trading opportunities using LangGraph orchestration.",
 )
