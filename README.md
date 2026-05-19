@@ -3,8 +3,9 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Orchestration: LangGraph](https://img.shields.io/badge/orchestration-langgraph-orange.svg)](https://github.com/langchain-ai/langgraph)
 
-A sophisticated multi-agent system for analyzing and trading prediction markets using LangGraph. Quantara discovers trading opportunities across Polymarket and Kalshi, analyzes market sentiment, assesses risk, and provides intelligent trader recommendations with real-time streaming updates.
+A sophisticated, production-grade multi-agent prediction market trading agent built on **LangGraph**. By organizing specialized agents into an acyclic stateful graph, Quantara coordinates complex, concurrent prediction analysis workflows—covering Market Discovery (Polymarket & Kalshi), Sentiment Analysis, Risk Assessment, and Trader Performance scoring. It integrates a custom TF-IDF local RAG database to serve as a self-improving vector memory (Closed Learning Loop) that learns from previous runs.
 
 ## 🎯 Features
 
@@ -73,41 +74,64 @@ asyncio.run(main())
 
 ## 🏗️ Architecture
 
-### System Flow
-
-```
-User Query
-    ↓
-Query Router (Intent parsing)
-    ↓
-State Manager (Context management)
-    ↓
-Workflow Controller (Agent orchestration)
-    ├─ Market Discovery Agent
-    │  ├─ Polymarket API
-    │  ├─ Kalshi API
-    │  └─ Niche Classification
-    │
-    ├─ Sentiment Analysis Agent
-    │  ├─ Apify News Enrichment
-    │  ├─ Sentiment Scoring
-    │  └─ Trend Detection
-    │
-    ├─ Risk Assessment Agent
-    │  ├─ Risk Profiling
-    │  ├─ Portfolio Optimization
-    │  └─ Position Sizing
-    │
-    └─ Trader Analysis Agent
-       ├─ Performance Metrics
-       ├─ Score Calculation
-       └─ Ranking
-    ↓
-Report Generator
-    ↓
-Streaming Output (Real-time updates)
-    ↓
-User Results
+```text
+                         +------------------------+
+                         |       User Query       |
+                         +------------------------+
+                                     |
+                                     v
+                         +------------------------+
+                         |   Query Router Node    |
+                         +------------------------+
+                                     |
+                                     v
+                  . - - - - - - - - - - - - - - - - - .
+                 '        RAG Memory Check             '
+                 ' (Searches local TF-IDF Vector DB)  ' - - - - - -> [ Local Vector Store DB ]
+                  ' - - - - - - - - - - - - - - - - - '              [   (vector_store.json)   ]
+                                     |                                          ^
+                                     v                                          |
+                         +------------------------+                             |
+                         | Market Discovery Node  |                             |
+                         | (Polymarket & Kalshi)  |                             |
+                         +------------------------+                             |
+                                     |                                          |
+                                     +-------------------+                      |
+                                     |                   |                      |
+                                     v                   v                      |
+                         +-----------------------+ +-----------------------+    |
+                         |  Sentiment Analysis   | |    Risk Assessment    |    |
+                         |         Agent         | |         Agent         |    |
+                         +-----------------------+ +-----------------------+    |
+                                     |                   |                      |
+                                     +---------+---------+                      |
+                                               |                                |
+                                               v                                |
+                         +------------------------+                             |
+                         |  Trader Analysis Node  |                             |
+                         +------------------------+                             |
+                                     |                                          |
+                                     v                                          |
+                  . - - - - - - - - - - - - - - - - - .                         |
+                 '        Recall RAG Context           '                        |
+                 '   (Applies +15% Score Boost)       '                         |
+                  ' - - - - - - - - - - - - - - - - - '                         |
+                                     |                                          |
+                                     v                                          |
+                  . - - - - - - - - - - - - - - - - - .                         |
+                 '      Closed Learning Ingestion      '                        |
+                 '   (Saves top performers to RAG)     ' - - - - - - - - - - - -+
+                  ' - - - - - - - - - - - - - - - - - '
+                                     |
+                                     v
+                         +------------------------+
+                         | Report Generator Node  |
+                         +------------------------+
+                                     |
+                                     v
+                         +------------------------+
+                         | Real-time Stream Out   |
+                         +------------------------+
 ```
 
 ### Core Components
@@ -253,10 +277,6 @@ Contributions are welcome! Please follow these guidelines:
 5. Open a Pull Request
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 

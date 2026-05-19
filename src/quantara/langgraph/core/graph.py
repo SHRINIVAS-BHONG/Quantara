@@ -888,11 +888,22 @@ class TradingGraph:
                 "focus_areas": self._extract_focus_areas(query)
             }
             
+            # Search historical RAG memory
+            try:
+                from quantara.rag.rag_agent import run_rag_agent
+                rag_res = run_rag_agent(query=state["original_query"])
+                rag_context = rag_res.get("top_traders", [])
+                self.logger.info(f"Retrieved {len(rag_context)} historical trader profiles from RAG Memory")
+            except Exception as e:
+                self.logger.warning(f"Failed to query RAG Memory: {e}")
+                rag_context = []
+
             updated_state = await safe_state_update(
                 state,
                 {
                     "parsed_intent": query_intent,
-                    "current_step": WorkflowStep.MARKET_DISCOVERY.value
+                    "current_step": WorkflowStep.MARKET_DISCOVERY.value,
+                    "rag_context": rag_context
                 },
                 "query_router",
                 "query_parsing_and_routing"

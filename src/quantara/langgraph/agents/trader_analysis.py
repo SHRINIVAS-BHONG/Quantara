@@ -261,6 +261,27 @@ class TraderAnalysisAgent:
             "quality_threshold": quality_threshold
         }
         
+        # Ingest top validated traders into RAG Memory to establish a Closed Learning Loop
+        try:
+            from quantara.rag.retriever import ingest_traders
+            top_ranked_profiles = []
+            for t in validated_traders[:3]:
+                trader_profile = t.get("trader")
+                if trader_profile:
+                    top_ranked_profiles.append({
+                        "trader_id": trader_profile.trader_id,
+                        "platform": trader_profile.platform,
+                        "niche": trader_profile.niche,
+                        "win_rate": trader_profile.win_rate,
+                        "roi": trader_profile.roi,
+                        "score": t.get("score", 0.0)
+                    })
+            if top_ranked_profiles:
+                ingested_count = ingest_traders(top_ranked_profiles)
+                self.logger.info(f"Ingested {ingested_count} top traders into RAG Memory (Closed Learning Loop)")
+        except Exception as e:
+            self.logger.warning(f"Failed to ingest top traders into RAG Memory: {e}")
+            
         return updated_state
     
     async def generate_confidence_scores(self, state: TradingState) -> TradingState:
@@ -276,10 +297,11 @@ class TraderAnalysisAgent:
         updated_state = state.copy()
         
         trader_scores = updated_state.get("trader_scores", [])
+        rag_context = updated_state.get("rag_context", [])
         
         for trader_data in trader_scores:
             confidence_score = self._calculate_recommendation_confidence(
-                trader_data, state.get("sentiment_analysis", {}), state.get("risk_assessment", {})
+                trader_data, state.get("sentiment_analysis", {}), state.get("risk_assessment", {}), rag_context
             )
             trader_data["recommendation_confidence"] = confidence_score
         
@@ -552,7 +574,8 @@ class TraderAnalysisAgent:
         self,
         trader_data: Dict[str, Any],
         sentiment_analysis: Dict[str, Any],
-        risk_assessment: Dict[str, Any]
+        risk_assessment: Dict[str, Any],
+        rag_context: List[Dict[str, Any]] = None
     ) -> float:
         """
         Calculate confidence score for trader recommendation.
@@ -592,8 +615,21 @@ class TraderAnalysisAgent:
         consistency_score = trader_data.get("score_breakdown", {}).get("consistency", 0.5)
         confidence_factors.append(consistency_score * 0.1)
         
+        # Check for RAG Memory alignment (bonus/boost if we have a match in historical memory)
+        rag_boost = 0.0
+        if rag_context:
+            trader = trader_data.get("trader")
+            trader_id = trader.trader_id if trader else None
+            if trader_id:
+                for hist_trader in rag_context:
+                    if hist_trader.get("trader_id") == trader_id:
+                        # Found match in historical memory
+                        rag_boost = 0.15  # Up to 15% confidence boost
+                        self.logger.info(f"RAG Memory Match found for trader {trader_id}! Adding {rag_boost * 100}% confidence boost.")
+                        break
+
         # Calculate overall confidence
-        overall_confidence = sum(confidence_factors)
+        overall_confidence = sum(confidence_factors) + rag_boost
         
         return min(1.0, max(0.0, overall_confidence))
     

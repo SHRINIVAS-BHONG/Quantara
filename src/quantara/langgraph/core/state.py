@@ -43,6 +43,18 @@ class StateConsistencyError(Exception):
     pass
 
 
+class CustomEncoder(json.JSONEncoder):
+    """Custom JSON encoder to handle dataclasses, datetimes, and Enums."""
+    def default(self, obj):
+        if hasattr(obj, '__dataclass_fields__'):
+            return {k: getattr(obj, k) for k in obj.__dataclass_fields__}
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+        if isinstance(obj, Enum):
+            return obj.value
+        return super().default(obj)
+
+
 @dataclass
 class StateTransition:
     """Represents a state transition with metadata for debugging."""
@@ -577,7 +589,7 @@ class StateManager:
             "original_query": state.get("original_query", ""),
             "checkpoint_id": state.get("state_checkpoint_id", "")
         }
-        content_str = json.dumps(state_content, sort_keys=True)
+        content_str = json.dumps(state_content, sort_keys=True, cls=CustomEncoder)
         return hashlib.md5(content_str.encode()).hexdigest()
     
     def log_state_transition(self, state: TradingState, from_step: str, to_step: str, 
@@ -598,7 +610,7 @@ class StateManager:
             
             # Calculate data hash for integrity checking
             state_data = {k: v for k, v in state.items() if not k.startswith("_")}
-            data_hash = hashlib.sha256(json.dumps(state_data, sort_keys=True).encode()).hexdigest()[:16]
+            data_hash = hashlib.sha256(json.dumps(state_data, sort_keys=True, cls=CustomEncoder).encode()).hexdigest()[:16]
             
             transition = StateTransition(
                 from_step=from_step,

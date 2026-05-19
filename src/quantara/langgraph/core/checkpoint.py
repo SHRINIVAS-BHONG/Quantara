@@ -24,7 +24,7 @@ from pathlib import Path
 from enum import Enum
 import os
 
-from .state import TradingState, WorkflowStep
+from .state import TradingState, WorkflowStep, CustomEncoder
 
 
 class CheckpointStorageType(Enum):
@@ -105,7 +105,7 @@ class Checkpoint:
         try:
             # Compute current state hash
             state_data = {k: v for k, v in self.state.items() if not k.startswith("_")}
-            state_json = json.dumps(state_data, sort_keys=True)
+            state_json = json.dumps(state_data, sort_keys=True, cls=CustomEncoder)
             computed_hash = hashlib.sha256(state_json.encode()).hexdigest()
             
             # Compare with stored hash
@@ -426,7 +426,7 @@ class CheckpointManager:
         """
         # Extract only non-private fields for hashing
         state_data = {k: v for k, v in state.items() if not k.startswith("_")}
-        state_json = json.dumps(state_data, sort_keys=True)
+        state_json = json.dumps(state_data, sort_keys=True, cls=CustomEncoder)
         return hashlib.sha256(state_json.encode()).hexdigest()
     
     def _serialize_state(self, state: TradingState) -> bytes:
