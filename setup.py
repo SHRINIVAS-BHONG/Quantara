@@ -13,7 +13,7 @@ setup(
         "langchain-core>=0.3.0",
         
         # Market Data Dependencies
-        "apify-client",
+        "apify-client<3",
         "py_clob_client",
         "kalshi-python",
         "requests",
